@@ -1,0 +1,20 @@
+FEATURES:
+- actual artwork for transport controls
+- some way to get to the queue from anywhere
+- current playing view (large album art, time remaining, etc)
+- icons and icon cache
+- better add-to-queue vs play-now interactions 
+- search / filter
+- spotify support
+- saving playlists
+- UI for zone group management
+- remove-from-queue
+- reorder-items-in-queue
+- implement eventing
+- use eventing to detect things changing out from under us (other controllers, etc)
+
+
+BUGS:
+- fails to SSDP discover if somebody else has the socket open
+- tear down SonosController threads when inactive
+
