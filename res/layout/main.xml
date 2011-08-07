@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+   android:orientation="vertical"
+   android:layout_width="match_parent"
+   android:layout_height="match_parent"
+   android:paddingLeft="8dp"
+   android:paddingRight="8dp">
+
+   <ListView android:id="@android:id/list"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_weight="1"
+      android:drawSelectorOnTop="false"/>
+
+   <LinearLayout android:id="@+id/controls"
+      android:orientation="horizontal"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"> 
+
+      <Button android:id="@+id/prev"
+         android:layout_width="wrap_content"
+         android:layout_height="match_parent"
+         android:textSize="24sp"
+         android:text=" |&lt;&lt; "
+         android:onClick="doPrev"/>
+      <Button android:id="@+id/play"
+         android:layout_width="wrap_content"
+         android:layout_height="match_parent"
+         android:textSize="24sp"
+         android:text=" |> "
+         android:onClick="doPlay"/>
+      <Button android:id="@+id/pause"
+         android:layout_width="wrap_content"
+         android:layout_height="match_parent"
+         android:textSize="24sp"
+         android:text=" || "
+         android:onClick="doPause"/>
+      <Button android:id="@+id/next"
+         android:layout_width="wrap_content"
+         android:layout_height="match_parent"
+         android:textSize="24sp"
+         android:text=" &gt;&gt;| "
+         android:onClick="doNext"/>
+   </LinearLayout>
+</LinearLayout>
+

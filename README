@@ -1,0 +1,6 @@
+This is a work in progress and very very rough around the edges.
+
+This project depends on my sonos library.
+1. build it
+2. copy sonos.jar into libs/
+
