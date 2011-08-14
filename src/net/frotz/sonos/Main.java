@@ -120,6 +120,19 @@ public class Main extends ListActivity
 				rightTitle.setText(active.name);
 		}
 		setListAdapter(active);
+		if (active.saved >= 0) {
+			int n = active.saved;
+			/* setSelection positions the selection as the first
+			 * visible item, which is a little weird.  Arrange
+			 * for a couple items to preceed it if possible.
+			 */
+			if (n > 3)
+				n -= 3;
+			else
+				n = 0;
+			cview.setSelection(n);
+			active.saved = -1;
+		}
 	}
 
 	public void onDragReorder(int pos, int newpos) {
@@ -162,6 +175,7 @@ public class Main extends ListActivity
 		return true;
 	}
 	protected void onListItemClick(ListView lv, View v, int pos, long id) {
+		active.saved = pos;
 		Item item = (Item) active.getItem(pos);
 		System.err.println(">> " + item.browse + ", " + item.play + " <<");
 		Container c = item.select(active);

@@ -44,6 +44,7 @@ public class Container implements ListAdapter, SonosListener, Handler.Callback {
 	int count;
 	int visible;
 	String name;
+	int saved;
 
 	public Container(String name, Container parent) {
 		this.name = name;
@@ -62,6 +63,7 @@ public class Container implements ListAdapter, SonosListener, Handler.Callback {
 		handler = new Handler(this);
 		dsolist = new DataSetObservable();
 		list = new Item[2048];
+		saved = -1;
 	}
 	public boolean handleMessage(Message m) {
 		boolean update;
