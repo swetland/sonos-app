@@ -72,6 +72,9 @@ class SonosController implements Runnable {
 	public void enqueue(String x) {
 		action(ENQUEUE, x);
 	}
+	public void remove(String x) {
+		action(REMOVE, x);
+	}
 	public void clearQueue() {
 		action(CLEAR_QUEUE, null);
 	}
@@ -124,6 +127,8 @@ class SonosController implements Runnable {
 		case CLEAR_QUEUE:
 			sonos.removeAll();
 			break;
+		case REMOVE:
+			sonos.remove(act.s);
 		}
 	}
 
@@ -204,5 +209,6 @@ class SonosController implements Runnable {
 	private final static int INIT = 8;
 	private final static int PAUSE = 9;
 	private final static int CLEAR_QUEUE = 10;
+	private final static int REMOVE = 11;
 }
 
