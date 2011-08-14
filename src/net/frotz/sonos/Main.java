@@ -30,7 +30,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class Main extends ListActivity 
-	implements Discover.Listener {
+	implements Discover.Listener, ContainerView.Listener {
 	private static final String TAG = "Sonos";
 	Discover discover;
 	Container zones;
@@ -39,6 +39,7 @@ public class Main extends ListActivity
 	View bar;
 	TextView rightTitle;
 	TextView leftTitle;
+	ContainerView cview;
 
 	protected void onCreate(Bundle b) {
 		Log.d(TAG,"--- onCreate() ---");
@@ -47,6 +48,10 @@ public class Main extends ListActivity
 		requestWindowFeature(Window.FEATURE_CUSTOM_TITLE);
 		setContentView(R.layout.main);
         	getWindow().setFeatureInt(Window.FEATURE_CUSTOM_TITLE, R.layout.title);
+
+		cview = (ContainerView) findViewById(android.R.id.list);
+		cview.setDragListener(this);
+		cview.setDragMode(cview.DND_DISCARD);
 
 		bar = findViewById(R.id.controls);
 
@@ -117,6 +122,35 @@ public class Main extends ListActivity
 		setListAdapter(active);
 	}
 
+	public void onDragDiscard(int pos) {
+		Item item = (Item) active.getItem(pos);
+		if (item.browse.startsWith("Q:")) {
+			/* This is somewhat dangerous, because if we're out of
+			 * sync we're going to remove the wrong item, but if we
+			 * remove an item in the middle of a queue, the following
+			 * items get renumbered and we're out of sync for later
+			 * actions...
+			 */
+			active.sc.remove("Q:0/" + (pos + 1));
+			
+			active.remove(pos);
+		} else {
+			active.sc.enqueue(item.play);
+		}
+	}
+	public boolean onDragStart(int pos) {
+		Item item = (Item) active.getItem(pos);
+		if ((item.flags & SonosItem.SONG) == 0) {
+			return false;
+		}
+		if (item.browse.startsWith("Q:")) {
+			cview.setDiscardColor(0xFFFF0000);
+		} else {
+			cview.setDiscardColor(0xFF00FF00);
+		}
+		return true;
+	}
+
 	public boolean onKeyUp(int code, KeyEvent evt) {
 		return true;
 	}
@@ -124,8 +158,13 @@ public class Main extends ListActivity
 		Item item = (Item) active.getItem(pos);
 		System.err.println(">> " + item.browse + ", " + item.play + " <<");
 		Container c = item.select(active);
-		if (c != null)
+		if (c != null) {
 			setActive(c);
+		} else {
+			if (item.browse.startsWith("Q:0/")) {
+				active.sc.seek(pos + 1);
+			}
+		}
 	}
 	public void found(String host) {
 		Log.d(TAG, "found: " + host);

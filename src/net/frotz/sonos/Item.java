@@ -41,24 +41,17 @@ public class Item {
 	}
 
 	public Container select(Container c) {
-		if ((flags & SonosItem.SONG) != 0) {
-			if (browse.startsWith("Q:0/")) {
-				int track = Integer.parseInt(browse.substring(4));
-				c.sc.seek(track);
-			} else {
-				c.sc.enqueue(play);
-			}
+		if ((flags & SonosItem.SONG) != 0)
 			return null;
-		} else {
-			Container child = new Container(title, c);
-			if (!browse.startsWith("Q:")) {
-				Item all = new Item(this);
-				all.title = "All Tracks...";
-				all.flags = SonosItem.SONG;
-				child.add(all);
-			}
-			child.sc.browse(browse, child);
-			return child;
+
+		Container child = new Container(title, c);
+		if (!browse.startsWith("Q:")) {
+			Item all = new Item(this);
+			all.title = "All Tracks...";
+			all.flags = SonosItem.SONG;
+			child.add(all);
 		}
+		child.sc.browse(browse, child);
+		return child;
 	}
 }
