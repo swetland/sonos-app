@@ -43,6 +43,7 @@ public class ContainerView extends ListView {
 	int mDiscardZone;
 	int mDiscardColor;
 	int mDragMode;
+	int mDragHeight;
 
 	ContainerView.Listener mCVL;
 
@@ -74,6 +75,9 @@ public class ContainerView extends ListView {
 
 			View item = (View)
 				getChildAt(pos - getFirstVisiblePosition());
+			ViewGroup.LayoutParams p =
+				item.getLayoutParams();
+			mDragHeight = 48;
 			item.setDrawingCacheEnabled(true);
 			Bitmap bm = Bitmap.createBitmap(item.getDrawingCache());
 			startDragging(bm, x, y);
@@ -91,17 +95,68 @@ public class ContainerView extends ListView {
 			case MotionEvent.ACTION_UP:
 			case MotionEvent.ACTION_CANCEL:
 				stopDragging();
-				if (x > mDiscardZone)
+				restore();
+				if (x > mDiscardZone) {
 					if ((mDragMode & DND_DISCARD) != 0)
 						mCVL.onDragDiscard(mDragPosition);
+				} else if ((mDragMode & DND_REORDER) != 0) {
+					int pos = pointToPosition(x,y);
+					if (pos != mDragPosition)
+						mCVL.onDragReorder(mDragPosition, pos);
+				}
 				break;
 			case MotionEvent.ACTION_DOWN:
 			case MotionEvent.ACTION_MOVE:
+				shuffle(x, y);
 				keepDragging(x,y);
 				return true;
 			}
 		}
 		return super.onTouchEvent(ev);
+	}
+
+	private void restore() {
+		if ((mDragMode & DND_REORDER) == 0)
+			return;
+
+		ViewGroup.LayoutParams p;
+		View v;
+		for (int i = 0; (v = getChildAt(i)) != null; i++) {
+			p = v.getLayoutParams();
+			p.height = mDragHeight;
+			v.setVisibility(VISIBLE);
+			v.setLayoutParams(p);
+		}
+	}
+
+	private void shuffle(int x, int y) {
+		if ((mDragMode & DND_REORDER) == 0)
+			return;
+
+		int pos = pointToPosition(x,y);
+		int top = getFirstVisiblePosition();
+		ViewGroup.LayoutParams p;
+		View v;
+
+		for (int i = 0; (v = getChildAt(i)) != null; i++) {
+			p = v.getLayoutParams();
+			if ((top + i) == mDragPosition) {
+				v.setVisibility(View.GONE);
+				if ((top + i) == pos) {
+					p.height = mDragHeight;
+				} else {
+					p.height = 1;
+				}
+			} else {
+				v.setVisibility(View.VISIBLE);
+				if ((top + i) == pos) {
+					p.height = mDragHeight * 2;
+				} else {
+					p.height = mDragHeight;
+				}
+			}
+			v.setLayoutParams(p);
+		}
 	}
 
 	private void startDragging(Bitmap bm, int x, int y) {
@@ -155,8 +210,9 @@ public class ContainerView extends ListView {
 		mDragMode = flags;
 	}
 	public static interface Listener {
-		void onDragDiscard(int pos);
 		boolean onDragStart(int pos);
+		void onDragDiscard(int pos);
+		void onDragReorder(int pos, int newpos);
 	}
 
 	public static final int DND_DISCARD = 1;
