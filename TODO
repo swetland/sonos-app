@@ -1,14 +1,11 @@
 FEATURES:
-- actual artwork for transport controls
 - some way to get to the queue from anywhere
 - current playing view (large album art, time remaining, etc)
 - icons and icon cache
-- better add-to-queue vs play-now interactions 
 - search / filter
 - spotify support
 - saving playlists
 - UI for zone group management
-- remove-from-queue
 - reorder-items-in-queue
 - implement eventing
 - use eventing to detect things changing out from under us (other controllers, etc)
@@ -16,11 +13,16 @@ FEATURES:
 - indicator of tracks that are already in the Queue?
 
 BUGS:
+- should be able to drag albums to the add-to-queue dropzone
 - fails to SSDP discover if somebody else has the socket open (platform bug?)
 - should retry discovery periodically (esp after network change, etc)
-- back button always leaves you at the top of the list you went back to
 - tear down SonosController threads when inactive
 - "All Tracks..." should probably not show in A:ARTISTS/$ARTIST A:/ALBUMS etc
 - Container should dynamically size the underlying list
 - Sonos should callback with total results size up front to enable that
 
+FIXED/IMPLEMENTED:
+- remove-from-queue
+- actual artwork for transport controls
+- back button always leaves you at the top of the list you went back to
+- better add-to-queue vs play-now interactions 
