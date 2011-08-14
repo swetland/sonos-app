@@ -16,10 +16,11 @@
 
 package net.frotz.sonos;
 
-import android.widget.ListAdapter;
+import android.graphics.drawable.Drawable;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Gravity;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.content.Context;
 
@@ -35,6 +36,7 @@ public class Container implements ListAdapter, SonosListener, Handler.Callback {
 	Context ctxt;
 	Container parent;
 	SonosController sc;
+	Drawable box;
 
 	Item list[];
 	boolean update;
@@ -55,6 +57,7 @@ public class Container implements ListAdapter, SonosListener, Handler.Callback {
 		init();
 	}
 	private void init() {
+		box = ctxt.getResources().getDrawable(R.drawable.box32);
 		handler = new Handler(this);
 		dsolist = new DataSetObservable();
 		list = new Item[2048];
@@ -92,6 +95,15 @@ public class Container implements ListAdapter, SonosListener, Handler.Callback {
 		msg.what = 1;
 		handler.sendMessage(msg);
 	}
+	public void remove(int pos) {
+		synchronized (list) {
+			if ((visible < 1) || (pos >= count))
+				return;
+			System.arraycopy(list, pos + 1, list, pos, count - pos - 1);
+			visible--;
+		}
+		dsolist.notifyChanged();
+	}
 
 	/* SonosListener Interface */
 	public void updateDone(String id) {
@@ -123,6 +135,8 @@ public class Container implements ListAdapter, SonosListener, Handler.Callback {
 			tv.setTextSize(24.0f);
 			tv.setGravity(Gravity.CENTER_VERTICAL);
 			tv.setHorizontallyScrolling(true);
+			tv.setCompoundDrawablePadding(5);
+			tv.setCompoundDrawablesWithIntrinsicBounds(box,null,null,null);
 		}
 		tv.setText(list[pos].title);
 		return tv;
