@@ -21,6 +21,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListAdapter;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.content.Context;
 
@@ -95,6 +96,14 @@ public class Container implements ListAdapter, SonosListener, Handler.Callback {
 		msg.what = 1;
 		handler.sendMessage(msg);
 	}
+	public void move(int from, int to) {
+		synchronized (list) {
+			Item tmp = list[to];
+			list[to] = list[from];
+			list[from] = tmp;
+		}
+		dsolist.notifyChanged();
+	}
 	public void remove(int pos) {
 		synchronized (list) {
 			if ((visible < 1) || (pos >= count))
@@ -126,10 +135,13 @@ public class Container implements ListAdapter, SonosListener, Handler.Callback {
 		return 0;
 	}
 	public View getView(int pos, View v, ViewGroup parent) {
+		LinearLayout ll;
 		TextView tv;
 		if (v != null) {
-			tv = (TextView) v;
+			ll = (LinearLayout) v;
+			tv = (TextView) ll.getChildAt(0);
 		} else {
+			ll = new LinearLayout(ctxt);
 			tv = new TextView(ctxt);
 			tv.setHeight(48);
 			tv.setTextSize(24.0f);
@@ -137,9 +149,12 @@ public class Container implements ListAdapter, SonosListener, Handler.Callback {
 			tv.setHorizontallyScrolling(true);
 			tv.setCompoundDrawablePadding(5);
 			tv.setCompoundDrawablesWithIntrinsicBounds(box,null,null,null);
+
+			ll.setGravity(Gravity.BOTTOM);
+			ll.addView(tv);
 		}
 		tv.setText(list[pos].title);
-		return tv;
+		return ll;
 	}
 	public int getViewTypeCount() {
 		return 1;
