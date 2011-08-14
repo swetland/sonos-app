@@ -122,6 +122,11 @@ public class Main extends ListActivity
 		setListAdapter(active);
 	}
 
+	public void onDragReorder(int pos, int newpos) {
+		System.err.println("MOVE " + pos + " -> " + newpos);
+		active.move(pos, newpos);	
+		active.sc.move(pos + 1, newpos + 1);
+	}
 	public void onDragDiscard(int pos) {
 		Item item = (Item) active.getItem(pos);
 		if (item.browse.startsWith("Q:")) {
@@ -145,8 +150,10 @@ public class Main extends ListActivity
 		}
 		if (item.browse.startsWith("Q:")) {
 			cview.setDiscardColor(0xFFFF0000);
+			cview.setDragMode(cview.DND_DISCARD | cview.DND_REORDER);
 		} else {
 			cview.setDiscardColor(0xFF00FF00);
+			cview.setDragMode(cview.DND_DISCARD);
 		}
 		return true;
 	}
@@ -162,6 +169,11 @@ public class Main extends ListActivity
 			setActive(c);
 		} else {
 			if (item.browse.startsWith("Q:0/")) {
+				/* We don't trust "browse" which may be stale
+				 * after a delete or move, but we do assume the
+				 * active container is in sync and the list order
+				 * matches the queue order.  TODO: ensure this.
+				 */
 				active.sc.seek(pos + 1);
 			}
 		}
