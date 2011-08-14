@@ -16,10 +16,11 @@ FEATURES:
 - indicator of tracks that are already in the Queue?
 
 BUGS:
-- fails to SSDP discover if somebody else has the socket open
+- fails to SSDP discover if somebody else has the socket open (platform bug?)
+- should retry discovery periodically (esp after network change, etc)
+- back button always leaves you at the top of the list you went back to
 - tear down SonosController threads when inactive
 - "All Tracks..." should probably not show in A:ARTISTS/$ARTIST A:/ALBUMS etc
 - Container should dynamically size the underlying list
 - Sonos should callback with total results size up front to enable that
-
 
