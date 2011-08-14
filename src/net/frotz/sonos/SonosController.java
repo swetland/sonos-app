@@ -66,6 +66,13 @@ class SonosController implements Runnable {
 	public void seek(int track) {
 		action(SEEK, track);
 	}
+	public void move(int from, int to) {
+		Action a = obtain();
+		a.what = MOVE;
+		a.i = from;
+		a.ii = to;
+		post(a);
+	}
 	public void play(String x) {
 		action(PLAY, x);
 	}
@@ -99,6 +106,9 @@ class SonosController implements Runnable {
 			break;
 		case ENQUEUE:
 			sonos.add(act.s);
+			break;
+		case MOVE:
+			sonos.move(act.i, act.ii);
 			break;
 		case SEEK:
 			sonos.seekTrack(act.i);
@@ -196,7 +206,7 @@ class SonosController implements Runnable {
 		Container c;
 		int what;
 		String s;
-		int i;
+		int i, ii;
 	}
 
 	private final static int BROWSE = 1;
@@ -210,5 +220,6 @@ class SonosController implements Runnable {
 	private final static int PAUSE = 9;
 	private final static int CLEAR_QUEUE = 10;
 	private final static int REMOVE = 11;
+	private final static int MOVE = 12;
 }
 
