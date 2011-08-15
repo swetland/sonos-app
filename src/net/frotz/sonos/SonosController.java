@@ -16,7 +16,7 @@
 
 package net.frotz.sonos;
 
-class SonosController implements Runnable {
+class SonosController implements Runnable, SonosListener {
 	Object lock;
 	Sonos sonos;
 	String uri;
@@ -94,10 +94,28 @@ class SonosController implements Runnable {
 	public void pause() {
 		action(PAUSE, null);
 	}
+
+	String mainQueueURI;
+	public void updateDone(String id) {
+	}
+	public void updateItem(String id, int idx, SonosItem in) {
+		if (in.idURI.eq("Q:0")) {
+			mainQueueURI = in.playURI.toString();
+			System.err.println("Queue -> " + mainQueueURI);
+		}
+	}
+	
+	void ensurePlayingFromQueue() {
+		String uri = sonos.getTransportURI();
+		if (!uri.equals(mainQueueURI))
+			sonos.setTransportURI(mainQueueURI);
+	}
+
 	void dispatch(Action act) {
 		switch (act.what) {
 		case INIT:
 			String name = sonos.getZoneName();
+			sonos.browse("Q:", this);
 			Zone zone = new Zone(name, this);
 			act.c.add(zone);
 			break;
@@ -111,12 +129,13 @@ class SonosController implements Runnable {
 			sonos.move(act.i, act.ii);
 			break;
 		case SEEK:
+			ensurePlayingFromQueue();
 			sonos.seekTrack(act.i);
 			sonos.play();
 			break;
 		case PLAY:
 			if (act.s != null)
-				sonos.set(act.s);
+				sonos.setTransportURI(act.s);
 			sonos.play();
 			break;
 		case PAUSE:
