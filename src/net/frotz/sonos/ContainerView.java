@@ -63,7 +63,6 @@ public class ContainerView extends ListView {
 			int pos = pointToPosition(x,y);
 			mDiscardZone = (getWidth() * 2) / 3;
 
-			System.err.println("DOWN @("+x+","+y+") -> " + pos);
 			if (pos < 0)
 				break;
 			if (x > 64)
